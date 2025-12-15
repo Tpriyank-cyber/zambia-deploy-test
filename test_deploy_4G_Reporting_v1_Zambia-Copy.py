@@ -164,7 +164,7 @@ if selected == "Contact Us":
     st.write(
         "**Developer:** Priyank Tomar  \n"
         "**Domain:** LTE / OSS / KPI Automation  \n"
-        "**Email:** priyank.tomar@nokia.com"
+        "**Email:** tomar.priyank@nokia.com"
     )
 
 # ===================== HIDE STREAMLIT BRANDING =====================
@@ -175,3 +175,4 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
+
