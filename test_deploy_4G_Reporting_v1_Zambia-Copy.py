@@ -79,7 +79,7 @@ with st.sidebar:
     )
 
     selected = option_menu(
-        menu_title="Region Name",
+        menu_title="Airtel Zambia",
         options=["About", "Tool", "Contact Us"],
         icons=["person", "slack", "telephone"],
         menu_icon=None,
@@ -231,6 +231,7 @@ if selected == "Contact Us":
         "**Domain:** LTE / OSS / KPI Automation  \n"
         "**Email:** tomar.priyank@nokia.com"
     )
+
 
 
 
