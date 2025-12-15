@@ -186,42 +186,42 @@ if selected == "Tool":
         st.success("✅ Day Cell Level KPI Generated")
         st.dataframe(pivot, use_container_width=True)
 
-        # -------- CONTINUE MODE --------
-        elif sheet_type == "Continue (Hour / Day)" and "LNCEL name" in df.columns:
+        # -------- CONTINUE MODE --------\
+    elif sheet_type == "Continue (Hour / Day)" and "LNCEL name" in df.columns:
 
-    if unique_dates == 1:
-        pivot = pd.pivot_table(
-            df,
-            index=['MRBTS name', 'LNCEL name'],
-            columns=['Date', 'Hour'],
-            values=available_kpis,
-            aggfunc='sum'
-        )
-
-        # ✅ FINAL FIX: KPI as ONE column, Date+Hour stay as columns
-        pivot = pivot.stack(level=0).reset_index()
-        pivot.rename(columns={'level_2': 'KPI NAME'}, inplace=True)
-
-        st.success("✅ Hour Cell Level KPI Generated")
-        st.dataframe(pivot, use_container_width=True)
-            else:
-                hour = st.number_input("Select Hour", 0, 23)
-                df_h = df[df["Hour"] == hour]
-
-                pivot = pd.pivot_table(
-                    df_h,
-                    index=['MRBTS name', 'LNCEL name'],
-                    columns='Date',
-                    values=available_kpis,
-                    aggfunc='sum'
-                )
-                # ✅ FINAL FIX: KPI as ONE column, Date+Hour stay as columns
-                pivot = pivot.stack(level=0).reset_index()
-                pivot.rename(columns={'level_2': 'KPI NAME'}, inplace=True)
-                st.success(f"✅ Hour {hour} KPI Generated")
-                st.dataframe(pivot, use_container_width=True)
+        if unique_dates == 1:
+            pivot = pd.pivot_table(
+                df,
+                index=['MRBTS name', 'LNCEL name'],
+                columns=['Date', 'Hour'],
+                values=available_kpis,
+                aggfunc='sum'
+            )
+    
+            # ✅ FINAL FIX: KPI as ONE column, Date+Hour stay as columns
+            pivot = pivot.stack(level=0).reset_index()
+            pivot.rename(columns={'level_2': 'KPI NAME'}, inplace=True)
+    
+            st.success("✅ Hour Cell Level KPI Generated")
+            st.dataframe(pivot, use_container_width=True)
         else:
-            st.error("❌ Invalid file structure or missing mandatory columns")
+                    hour = st.number_input("Select Hour", 0, 23)
+                    df_h = df[df["Hour"] == hour]
+    
+                    pivot = pd.pivot_table(
+                        df_h,
+                        index=['MRBTS name', 'LNCEL name'],
+                        columns='Date',
+                        values=available_kpis,
+                        aggfunc='sum'
+                    )
+                    # ✅ FINAL FIX: KPI as ONE column, Date+Hour stay as columns
+                    pivot = pivot.stack(level=0).reset_index()
+                    pivot.rename(columns={'level_2': 'KPI NAME'}, inplace=True)
+                    st.success(f"✅ Hour {hour} KPI Generated")
+                    st.dataframe(pivot, use_container_width=True)
+    else:
+                st.error("❌ Invalid file structure or missing mandatory columns")
 
 # ===================== CONTACT US =====================
 if selected == "Contact Us":
@@ -231,5 +231,6 @@ if selected == "Contact Us":
         "**Domain:** LTE / OSS / KPI Automation  \n"
         "**Email:** tomar.priyank@nokia.com"
     )
+
 
 
