@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec 15 12:17:20 2025
-
 @author: tpriyank
 """
 
-import os
 import pandas as pd
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -18,18 +16,79 @@ st.set_page_config(
     layout="wide"
 )
 
+# ===================== COLORS =====================
 background_text_color = "#001135"
 background_header_text_color = "#a235b6"
+sidebar_bg = "#f5f0fa"
+
+# ===================== CUSTOM CSS =====================
+st.markdown("""
+<style>
+/* Hide Streamlit branding */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* App background */
+.stApp {
+    background-color: #ffffff;
+    font-family: "Nokia Pure Headline Light";
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #f5f0fa;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #001135;
+    font-family: "Nokia Pure Headline";
+}
+
+/* Labels & text */
+label, .stMarkdown, .stText {
+    color: #001135;
+    font-size: 16px;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #a235b6;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+}
+.stButton > button:hover {
+    background-color: #842b94;
+}
+
+/* DataFrame border */
+[data-testid="stDataFrame"] {
+    border: 1px solid #a235b6;
+    border-radius: 6px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ===================== SIDEBAR =====================
 with st.sidebar:
+    st.markdown(
+        "<h2 style='text-align:center; color:#660a93;'>LTE Reporting</h2>",
+        unsafe_allow_html=True
+    )
+
     selected = option_menu(
         menu_title="Region Name",
         options=["About", "Tool", "Contact Us"],
         icons=["person", "slack", "telephone"],
         menu_icon=None,
         styles={
-            "menu-title": {"color": "#660a93", "font-weight": "bold", "text-align": "center"},
+            "menu-title": {
+                "color": "#660a93",
+                "font-weight": "bold",
+                "text-align": "center"
+            },
             "nav-link": {
                 "color": "#61206d",
                 "font-size": "16px",
@@ -61,13 +120,13 @@ KPI_Obj = [
 
 # ===================== COMMON FUNCTIONS =====================
 def safe_kpis(df):
-    """Return only KPIs available in file"""
     available = [k for k in KPI_Obj if k in df.columns]
     df[available] = df[available].apply(pd.to_numeric, errors='coerce')
     return available
 
 def read_file():
-    uploaded_file = st.file_uploader("Upload LTE KPI File", type=["xlsx", "xls"])
+    st.markdown("### 📂 Upload LTE KPI File")
+    uploaded_file = st.file_uploader("", type=["xlsx", "xls"])
     if uploaded_file:
         df = pd.read_excel(uploaded_file)
         df.columns = df.columns.str.strip()
@@ -79,30 +138,24 @@ def read_file():
 
 # ===================== ABOUT =====================
 if selected == "About":
-    st.markdown(
-        f"<h3 style='color:{background_text_color};'>Tool Introduction</h3>",
-        unsafe_allow_html=True
-    )
+    st.markdown("## ℹ Tool Introduction")
     st.write(
-        "This LTE Data Processing tool automates Day and Hour level KPI aggregation "
-        "for Cell and PLMN views, enabling faster OSS-based performance analysis."
+        "This LTE Data Processing tool automates **Day & Hour level KPI aggregation** "
+        "for **Cell and PLMN views**, enabling faster and accurate OSS-based performance analysis."
     )
 
-    st.markdown(
-        f"<h3 style='color:{background_text_color};'>Key Capabilities</h3>",
-        unsafe_allow_html=True
-    )
-    st.write(
-        "- Day / Hour KPI aggregation\n"
-        "- Cell & PLMN level analysis\n"
-        "- Automated KPI validation\n"
-        "- Streamlit-based interactive UI"
-    )
+    st.markdown("## 🚀 Key Capabilities")
+    st.markdown("""
+    - Day & Hour KPI aggregation  
+    - Cell & PLMN level analysis  
+    - Automated KPI validation  
+    - Nokia-styled Streamlit UI  
+    """)
 
 # ===================== TOOL =====================
 if selected == "Tool":
-    st.title("LTE Data Processing Application")
-    st.write("**Developed By Priyank Tomar**")
+    st.markdown("## 📊 LTE Data Processing Application")
+    st.write("**Developed by Priyank Tomar**")
 
     df = read_file()
 
@@ -110,6 +163,7 @@ if selected == "Tool":
         available_kpis = safe_kpis(df)
         unique_dates = df['Date'].nunique()
 
+        st.markdown("### ⚙ Processing Options")
         sheet_type = st.selectbox(
             "Select Sheet Type",
             ["BBH (Cell Day)", "Continue (Hour / Day)"]
@@ -124,8 +178,8 @@ if selected == "Tool":
                 values=available_kpis,
                 aggfunc='sum'
             )
-            st.success("Day Cell Level KPI Generated")
-            st.dataframe(pivot)
+            st.success("✅ Day Cell Level KPI Generated")
+            st.dataframe(pivot, use_container_width=True)
 
         # -------- CONTINUE MODE --------
         elif sheet_type == "Continue (Hour / Day)" and "LNCEL name" in df.columns:
@@ -137,8 +191,8 @@ if selected == "Tool":
                     values=available_kpis,
                     aggfunc='sum'
                 )
-                st.success("Hour Cell Level KPI Generated")
-                st.dataframe(pivot)
+                st.success("✅ Hour Cell Level KPI Generated")
+                st.dataframe(pivot, use_container_width=True)
             else:
                 hour = st.number_input("Select Hour", 0, 23)
                 df_h = df[df["Hour"] == hour]
@@ -150,29 +204,16 @@ if selected == "Tool":
                     values=available_kpis,
                     aggfunc='sum'
                 )
-                st.success(f"Hour {hour} KPI Generated")
-                st.dataframe(pivot)
+                st.success(f"✅ Hour {hour} KPI Generated")
+                st.dataframe(pivot, use_container_width=True)
         else:
-            st.error("Invalid file structure or missing mandatory columns.")
+            st.error("❌ Invalid file structure or missing mandatory columns")
 
 # ===================== CONTACT US =====================
 if selected == "Contact Us":
-    st.markdown(
-        f"<h3 style='color:{background_header_text_color};'>Need Help?</h3>",
-        unsafe_allow_html=True
-    )
+    st.markdown("## 📞 Contact Us")
     st.write(
         "**Developer:** Priyank Tomar  \n"
         "**Domain:** LTE / OSS / KPI Automation  \n"
         "**Email:** tomar.priyank@nokia.com"
     )
-
-# ===================== HIDE STREAMLIT BRANDING =====================
-st.markdown("""
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
